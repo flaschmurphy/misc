@@ -33,6 +33,7 @@ class TCPServer(threading.Thread):
         
     def __enter__(self):
         self.start()
+        # may find you need to return `self` here!?
         
     def __exit__(self, exception_type, exception_value, traceback):
         self.stop()
