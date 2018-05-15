@@ -62,7 +62,7 @@ class TCPServer(threading.Thread):
                     # The readable is an existing connection where the remote side
                     # has sent some data to be collected by the server
                     data = s.recv(1024).decode('utf-8')
-                    if data and len(data) > 0:
+                    if data and data != '':
                         logging.info('TCPServer thread: Message received from %s:%d |%s|',
                                      s.getpeername()[0], s.getpeername()[1], data)
                         handlr_resp = self._request_handler(s, data)
@@ -74,14 +74,16 @@ class TCPServer(threading.Thread):
 
                         if s not in self._outputs:
                             self._outputs.append(s)
-                    #else:
-                    #    self._inputs.remove(s)
-                    #    if s in self._outputs:
-                    #        self._outputs.remove(s)
-                    #    logging.info('TCPServer thread: Connection %s is closing now',
-                    #                 ':'.join([str(i) for i in s.getpeername()]))
-                    #    s.shutdown(0)
-                    #    del self._message_queues[s]
+                    elif s not in writable:
+                        # There is no data to read from the connection and also nothing to
+                        # write to it, therefore close it and remove it's data
+                        self._inputs.remove(s)
+                        if s in self._outputs:
+                            self._outputs.remove(s)
+                        logging.info('TCPServer thread: Connection %s is closing now',
+                                     ':'.join([str(i) for i in s.getpeername()]))
+                        s.shutdown(0)
+                        del self._message_queues[s]
 
             for s in writable:
                 try:
