@@ -1,0 +1,50 @@
+#!/bin/bash
+
+#
+# Generic template for bash scripts
+#
+
+set -u    # Die if trying to access variables that are undefined
+set -e    # Die if any command has a non-zero return value
+
+DATE=$(date +%Y%m%d%H%M%S)
+ORIG_DIR=$(pwd)
+SCRPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+
+
+print_exit() {
+    printf "\n${1}\n"
+    exit 1
+}
+
+
+get_user_input() {
+    # Ask the user for input, lower case it, and assign it to a supplied variable
+    #  $1 is the question to send to the users terminal
+    #  $2 is the default response if the user only presses return
+    #  $3 is the timeout for the question (will full exit on timeout)
+    #  $4 is the variable that stores the response for retrieval outside this func
+    #  $5 is the error to print to screen if a timeout occurs
+    # Requires function print_exit()
+    read -t "$3" -p "$1" var || print_exit "Timeout occured"
+    var=${var:-$2}
+    var=$(echo ${var} | tr '[:upper:]' '[:lower:]')
+    eval $4=$var
+
+    # Sample usage:
+    #  response=
+    #  get_user_input "Proceed with HDD erase? [Y|n]: " "Y" 5 response "Timeout!"
+    #  echo $response
+    
+}
+
+
+main() {
+    cd ${SCRPT_DIR}
+
+    # Main logic goes here
+
+    cd ${ORIG_DIR} >/dev/null
+}
+
+main
