@@ -2,7 +2,7 @@
     Simple TCP level socket server & client. Serves multiple client requests using the `select` method of
     obtaining non-blocking behavior. 
     
-    Developed on Python 2.6.
+    Developed on Python 3.6.
     
     Credit to Alexander Stepanov for inspiration (https://steelkiwi.com/blog/working-tcp-sockets/)
 """
